@@ -1,39 +1,59 @@
 // ==========================================
-// GET ELEMENTS
+// ELEMENTS
 // ==========================================
 
 const startButton =
-    document.getElementById("startButton");
+    document.getElementById(
+        "startButton"
+    );
+
 
 const startARButton =
-    document.getElementById("startARButton");
+    document.getElementById(
+        "startARButton"
+    );
+
 
 const introScreen =
-    document.getElementById("intro-screen");
+    document.getElementById(
+        "intro-screen"
+    );
+
 
 const level1Screen =
-    document.getElementById("level1-screen");
+    document.getElementById(
+        "level1-screen"
+    );
+
 
 const arScreen =
-    document.getElementById("ar-screen");
+    document.getElementById(
+        "ar-screen"
+    );
+
 
 const canvas =
-    document.getElementById("ar-canvas");
+    document.getElementById(
+        "ar-canvas"
+    );
+
 
 const arMessage =
-    document.getElementById("ar-message");
+    document.getElementById(
+        "ar-message"
+    );
+
 
 const placementDot =
-    document.getElementById("placement-dot");
+    document.getElementById(
+        "placement-dot"
+    );
+
 
 const placeButton =
-    document.getElementById("place-button");
-
-const heartObject =
-    document.getElementById("heart-object");
-
-const heartCount =
-    document.getElementById("heartCount");
+    document.getElementById(
+        "place-button"
+    );
 
 
 // ==========================================
@@ -48,9 +68,7 @@ let instantTracker = null;
 
 let gl = null;
 
-let hasPlaced = false;
-
-let hearts = 0;
+let arRunning = false;
 
 
 // ==========================================
@@ -61,43 +79,62 @@ startButton.addEventListener(
     "click",
     function () {
 
-        introScreen.classList.add("hidden");
+        console.log(
+            "GAME START"
+        );
 
-        level1Screen.classList.remove("hidden");
+
+        introScreen.classList.add(
+            "hidden"
+        );
+
+
+        level1Screen.classList.remove(
+            "hidden"
+        );
 
     }
 );
 
 
 // ==========================================
-// START AR
+// START AR BUTTON
 // ==========================================
 
 startARButton.addEventListener(
     "click",
     async function () {
 
-        console.log("START AR");
+        console.log(
+            "START AR BUTTON CLICKED"
+        );
 
-        level1Screen.classList.add("hidden");
 
-        arScreen.classList.remove("hidden");
+        level1Screen.classList.add(
+            "hidden"
+        );
+
+
+        arScreen.classList.remove(
+            "hidden"
+        );
 
 
         try {
 
-            await startZapparAR();
+            await initializeAR();
 
         } catch (error) {
 
             console.error(
-                "ZAPPAR ERROR:",
+                "AR INITIALIZATION ERROR:",
                 error
             );
 
+
             showError(
                 error.message ||
-                "ไม่สามารถเริ่ม AR ได้"
+                "Unknown AR error"
             );
 
         }
@@ -107,14 +144,19 @@ startARButton.addEventListener(
 
 
 // ==========================================
-// START ZAPPAR AR
+// INITIALIZE AR
 // ==========================================
 
-async function startZapparAR() {
+async function initializeAR() {
 
-    // ------------------------------------------
-    // CHECK ZAPPAR
-    // ------------------------------------------
+    console.log(
+        "INITIALIZING ZAPPAR..."
+    );
+
+
+    // --------------------------------------
+    // CHECK SDK
+    // --------------------------------------
 
     if (
         typeof Zappar ===
@@ -122,20 +164,20 @@ async function startZapparAR() {
     ) {
 
         throw new Error(
-            "Zappar SDK โหลดไม่สำเร็จ"
+            "Zappar SDK is not loaded."
         );
 
     }
 
 
     console.log(
-        "Zappar SDK loaded"
+        "ZAPPAR SDK OK"
     );
 
 
-    // ------------------------------------------
+    // --------------------------------------
     // GET WEBGL
-    // ------------------------------------------
+    // --------------------------------------
 
     gl =
         canvas.getContext(
@@ -150,37 +192,54 @@ async function startZapparAR() {
     if (!gl) {
 
         throw new Error(
-            "อุปกรณ์นี้ไม่รองรับ WebGL"
+            "WebGL is not supported."
         );
 
     }
 
 
-    // ------------------------------------------
-    // RESIZE CANVAS
-    // ------------------------------------------
+    console.log(
+        "WEBGL OK"
+    );
+
+
+    // --------------------------------------
+    // RESIZE
+    // --------------------------------------
 
     resizeCanvas();
 
 
-    // ------------------------------------------
+    // --------------------------------------
     // CREATE PIPELINE
-    // ------------------------------------------
+    // --------------------------------------
 
     pipeline =
         new Zappar.Pipeline();
 
 
-    // ------------------------------------------
+    console.log(
+        "PIPELINE CREATED"
+    );
+
+
+    // --------------------------------------
     // CONNECT WEBGL
-    // ------------------------------------------
+    // --------------------------------------
 
-    pipeline.glContextSet(gl);
+    pipeline.glContextSet(
+        gl
+    );
 
 
-    // ------------------------------------------
-    // CREATE CAMERA
-    // ------------------------------------------
+    console.log(
+        "GL CONTEXT SET"
+    );
+
+
+    // --------------------------------------
+    // CREATE CAMERA SOURCE
+    // --------------------------------------
 
     const deviceId =
         Zappar.cameraDefaultDeviceID();
@@ -193,9 +252,14 @@ async function startZapparAR() {
         );
 
 
-    // ------------------------------------------
+    console.log(
+        "CAMERA SOURCE CREATED"
+    );
+
+
+    // --------------------------------------
     // CREATE WORLD TRACKER
-    // ------------------------------------------
+    // --------------------------------------
 
     instantTracker =
         new Zappar.InstantWorldTracker(
@@ -203,9 +267,19 @@ async function startZapparAR() {
         );
 
 
-    // ------------------------------------------
+    console.log(
+        "WORLD TRACKER CREATED"
+    );
+
+
+    // --------------------------------------
     // REQUEST PERMISSIONS
-    // ------------------------------------------
+    // --------------------------------------
+
+    console.log(
+        "REQUESTING PERMISSION..."
+    );
+
 
     const granted =
         await Zappar.permissionRequest();
@@ -213,30 +287,33 @@ async function startZapparAR() {
 
     if (!granted) {
 
-        Zappar.permissionDeniedUI();
-
         throw new Error(
-            "ไม่ได้รับอนุญาตให้ใช้กล้องหรือ Motion Sensors"
+            "Camera permission was denied."
         );
 
     }
 
 
-    // ------------------------------------------
+    console.log(
+        "PERMISSION GRANTED"
+    );
+
+
+    // --------------------------------------
     // START CAMERA
-    // ------------------------------------------
+    // --------------------------------------
 
     cameraSource.start();
 
 
     console.log(
-        "Zappar camera started"
+        "CAMERA STARTED"
     );
 
 
-    // ------------------------------------------
-    // INITIAL UI
-    // ------------------------------------------
+    // --------------------------------------
+    // SHOW UI
+    // --------------------------------------
 
     arMessage.textContent =
         "SCAN THE GROUND";
@@ -250,28 +327,27 @@ async function startZapparAR() {
         "block";
 
 
-    placeButton.textContent =
-        "TAP TO PLACE";
+    // --------------------------------------
+    // START AR LOOP
+    // --------------------------------------
 
+    arRunning = true;
 
-    heartObject.classList.add(
-        "hidden"
-    );
-
-
-    // ------------------------------------------
-    // START RENDER LOOP
-    // ------------------------------------------
 
     requestAnimationFrame(
         renderAR
+    );
+
+
+    console.log(
+        "AR STARTED SUCCESSFULLY"
     );
 
 }
 
 
 // ==========================================
-// RENDER LOOP
+// AR RENDER LOOP
 // ==========================================
 
 function renderAR() {
@@ -282,6 +358,7 @@ function renderAR() {
 
 
     if (
+        !arRunning ||
         !pipeline ||
         !gl
     ) {
@@ -291,25 +368,64 @@ function renderAR() {
     }
 
 
-    // ------------------------------------------
+    // --------------------------------------
     // PROCESS CAMERA FRAME
-    // ------------------------------------------
+    // --------------------------------------
 
     pipeline.processGL();
 
 
-    // ------------------------------------------
+    // --------------------------------------
     // UPDATE TRACKING
-    // ------------------------------------------
+    // --------------------------------------
 
     pipeline.frameUpdate();
 
 
-    // ------------------------------------------
-    // RESIZE
-    // ------------------------------------------
+    // --------------------------------------
+    // DRAW CAMERA
+    // --------------------------------------
 
-    resizeCanvas();
+    pipeline.cameraFrameUploadGL();
+
+
+    pipeline.cameraFrameDrawGL(
+        canvas.width,
+        canvas.height
+    );
+
+
+    // --------------------------------------
+    // RESET WEBGL STATE
+    // --------------------------------------
+
+    gl.bindFramebuffer(
+        gl.FRAMEBUFFER,
+        null
+    );
+
+
+    gl.bindTexture(
+        gl.TEXTURE_2D,
+        null
+    );
+
+
+    gl.bindBuffer(
+        gl.ARRAY_BUFFER,
+        null
+    );
+
+
+    gl.bindBuffer(
+        gl.ELEMENT_ARRAY_BUFFER,
+        null
+    );
+
+
+    gl.useProgram(
+        null
+    );
 
 
     gl.viewport(
@@ -319,88 +435,48 @@ function renderAR() {
         canvas.height
     );
 
-
-    // ------------------------------------------
-    // UPLOAD CAMERA FRAME
-    // ------------------------------------------
-
-    pipeline.cameraFrameUploadGL();
-
-
-    // ------------------------------------------
-    // DRAW CAMERA
-    // ------------------------------------------
-
-    pipeline.cameraFrameDrawGL(
-        canvas.width,
-        canvas.height
-    );
-
-
-    // ------------------------------------------
-    // WORLD TRACKING
-    // ------------------------------------------
-
-    if (!hasPlaced) {
-
-        /*
-         * Choose a point approximately
-         * 5 units in front of the camera.
-         *
-         * This is the placement point used
-         * by Zappar Instant World Tracking.
-         */
-
-        instantTracker
-            .setAnchorPoseFromCameraOffset(
-                0,
-                0,
-                -5
-            );
-
-
-    } else {
-
-        /*
-         * Once placed, the anchor remains
-         * associated with the chosen world point.
-         */
-
-    }
-
 }
 
 
 // ==========================================
-// PLACE OBJECT
+// PLACE
 // ==========================================
 
 placeButton.addEventListener(
     "click",
     function () {
 
+        console.log(
+            "PLACE BUTTON CLICKED"
+        );
+
+
         if (!instantTracker) {
+
+            console.error(
+                "Instant tracker is missing."
+            );
 
             return;
 
         }
 
 
-        console.log(
-            "PLACE OBJECT"
-        );
+        // ----------------------------------
+        // CREATE WORLD ANCHOR
+        // ----------------------------------
+
+        instantTracker
+            .setAnchorPoseFromCameraOffset(
+                0,
+                0,
+                -2
+            );
 
 
-        // --------------------------------------
-        // LOCK PLACEMENT
-        // --------------------------------------
-
-        hasPlaced = true;
-
-
-        // --------------------------------------
-        // CHANGE UI
-        // --------------------------------------
+        // ----------------------------------
+        // UPDATE UI
+        // ----------------------------------
 
         arMessage.textContent =
             "WISH FOUND!";
@@ -414,17 +490,8 @@ placeButton.addEventListener(
             "none";
 
 
-        // --------------------------------------
-        // SHOW TEMPORARY HEART
-        // --------------------------------------
-
-        heartObject.classList.remove(
-            "hidden"
-        );
-
-
         console.log(
-            "HEART PLACED"
+            "WORLD ANCHOR PLACED"
         );
 
     }
@@ -432,65 +499,7 @@ placeButton.addEventListener(
 
 
 // ==========================================
-// HEART CLICK
-// ==========================================
-
-heartObject.addEventListener(
-    "click",
-    function () {
-
-        collectHeart();
-
-    }
-);
-
-
-// ==========================================
-// COLLECT HEART
-// ==========================================
-
-function collectHeart() {
-
-    hearts++;
-
-    if (hearts > 3) {
-
-        hearts = 3;
-
-    }
-
-
-    heartCount.textContent =
-        hearts;
-
-
-    heartObject.classList.add(
-        "hidden"
-    );
-
-
-    arMessage.textContent =
-        "WISH FOUND ♥";
-
-
-    console.log(
-        "HEARTS:",
-        hearts
-    );
-
-
-    if (hearts >= 3) {
-
-        arMessage.textContent =
-            "3 WISHES FOUND!";
-
-    }
-
-}
-
-
-// ==========================================
-// RESIZE
+// RESIZE CANVAS
 // ==========================================
 
 function resizeCanvas() {
@@ -504,6 +513,7 @@ function resizeCanvas() {
 
     const width =
         window.innerWidth;
+
 
     const height =
         window.innerHeight;
@@ -556,7 +566,9 @@ window.addEventListener(
 // ERROR
 // ==========================================
 
-function showError(message) {
+function showError(
+    message
+) {
 
     console.error(
         "AR ERROR:",
@@ -577,7 +589,7 @@ function showError(message) {
 
 
 // ==========================================
-// VISIBILITY
+// PAGE VISIBILITY
 // ==========================================
 
 document.addEventListener(
@@ -600,7 +612,11 @@ document.addEventListener(
 
         } else {
 
-            cameraSource.start();
+            if (arRunning) {
+
+                cameraSource.start();
+
+            }
 
         }
 
