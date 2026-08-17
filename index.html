@@ -17,15 +17,18 @@
         href="style.css"
     >
 
+    <!-- Zappar Universal AR JavaScript SDK -->
+    <script src="https://libs.zappar.com/zappar-js/*/zappar.js"></script>
+
 </head>
 
 
 <body>
 
 
-    <!-- =============================== -->
+    <!-- ========================================= -->
     <!-- INTRO -->
-    <!-- =============================== -->
+    <!-- ========================================= -->
 
     <section id="intro-screen">
 
@@ -39,13 +42,11 @@
 
             </div>
 
-
             <div class="game-subtitle">
 
                 FIND THE BIRTHDAY WISHES
 
             </div>
-
 
             <div class="message-box">
 
@@ -69,7 +70,6 @@
 
             </div>
 
-
             <button id="startButton">
                 ARE YOU READY?
             </button>
@@ -80,9 +80,9 @@
 
 
 
-    <!-- =============================== -->
+    <!-- ========================================= -->
     <!-- LEVEL 1 -->
-    <!-- =============================== -->
+    <!-- ========================================= -->
 
     <section
         id="level1-screen"
@@ -95,11 +95,9 @@
                 LEVEL 1
             </div>
 
-
             <div class="level-title">
                 FIND THE WISHES
             </div>
-
 
             <div class="heart-counter">
 
@@ -113,16 +111,13 @@
 
             </div>
 
-
             <p class="level-instruction">
-                SCAN THE AREA
+                FIND THE HIDDEN WISHES
             </p>
-
 
             <p class="level-description">
-                Find the hidden wishes...
+                Point your camera at the ground.
             </p>
-
 
             <button id="startARButton">
                 START AR
@@ -134,12 +129,50 @@
 
 
 
-    <!-- =============================== -->
-    <!-- JAVASCRIPT -->
-    <!-- =============================== -->
+    <!-- ========================================= -->
+    <!-- AR SCREEN -->
+    <!-- ========================================= -->
+
+    <div
+        id="ar-screen"
+        class="hidden"
+    >
+
+        <!-- WebGL Canvas -->
+        <canvas id="ar-canvas"></canvas>
+
+
+        <!-- AR UI -->
+
+        <div id="ar-ui">
+
+            <div id="ar-message">
+                SCAN THE GROUND
+            </div>
+
+
+            <div id="placement-dot">
+                +
+            </div>
+
+
+            <button id="place-button">
+
+                TAP TO PLACE
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- GAME JAVASCRIPT -->
+    <!-- ========================================= -->
 
     <script src="script.js"></script>
-
 
 </body>
 
