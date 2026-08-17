@@ -1,363 +1,8 @@
 /* ========================================= */
-/* FONT                                      */
+/* ZAPPAR AR CANVAS                          */
 /* ========================================= */
 
-@font-face {
-
-    font-family: "Pixellet";
-
-    src: url("fonts/Pixellet.ttf") format("truetype");
-
-    font-weight: normal;
-
-    font-style: normal;
-
-    font-display: swap;
-
-}
-
-
-/* ========================================= */
-/* VARIABLES                                 */
-/* ========================================= */
-
-:root {
-
-    --blue: #58A6FF;
-
-    --pink: #FF6B6B;
-
-    --cream: #FFEDD5;
-
-    --dark: #111827;
-
-    --white: #FFFFFF;
-
-}
-
-
-/* ========================================= */
-/* RESET                                     */
-/* ========================================= */
-
-* {
-
-    box-sizing: border-box;
-
-}
-
-
-html,
-body {
-
-    width: 100%;
-
-    height: 100%;
-
-    margin: 0;
-
-    padding: 0;
-
-}
-
-
-/* ========================================= */
-/* BODY                                      */
-/* ========================================= */
-
-body {
-
-    background: var(--cream);
-
-    color: var(--dark);
-
-    font-family: "Pixellet", monospace;
-
-    overflow: hidden;
-
-}
-
-
-/* ========================================= */
-/* SCREEN                                    */
-/* ========================================= */
-
-section {
-
-    width: 100vw;
-
-    height: 100vh;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 20px;
-
-}
-
-
-/* ========================================= */
-/* INTRO                                     */
-/* ========================================= */
-
-#intro-screen {
-
-    background:
-
-        linear-gradient(
-            135deg,
-            var(--blue) 0%,
-            var(--blue) 45%,
-            var(--pink) 45%,
-            var(--pink) 100%
-        );
-
-}
-
-
-/* ========================================= */
-/* LEVEL 1                                   */
-/* ========================================= */
-
-#level1-screen {
-
-    background:
-
-        linear-gradient(
-            135deg,
-            var(--pink) 0%,
-            var(--pink) 45%,
-            var(--blue) 45%,
-            var(--blue) 100%
-        );
-
-}
-
-
-/* ========================================= */
-/* PIXEL FRAME                               */
-/* ========================================= */
-
-.pixel-frame {
-
-    width: min(90vw, 650px);
-
-    padding: 35px 25px;
-
-    background: var(--cream);
-
-    border: 8px solid var(--dark);
-
-    box-shadow:
-        12px 12px 0 var(--dark),
-        -6px -6px 0 var(--pink);
-
-    text-align: center;
-
-}
-
-
-/* ========================================= */
-/* TITLE                                     */
-/* ========================================= */
-
-.game-title {
-
-    font-size: clamp(32px, 8vw, 64px);
-
-    line-height: 0.95;
-
-    color: var(--blue);
-
-    text-shadow:
-        4px 4px 0 var(--dark);
-
-    margin-bottom: 18px;
-
-}
-
-
-/* ========================================= */
-/* SUBTITLE                                  */
-/* ========================================= */
-
-.game-subtitle {
-
-    font-size: clamp(12px, 3vw, 18px);
-
-    color: var(--pink);
-
-    letter-spacing: 2px;
-
-    margin-bottom: 30px;
-
-}
-
-
-/* ========================================= */
-/* MESSAGE                                   */
-/* ========================================= */
-
-.message-box {
-
-    background: var(--white);
-
-    border: 5px solid var(--dark);
-
-    padding: 20px;
-
-    margin-bottom: 30px;
-
-    line-height: 1.8;
-
-    font-size: clamp(13px, 3vw, 17px);
-
-}
-
-
-.message-box .hello {
-
-    color: var(--pink);
-
-    font-size: 22px;
-
-    margin-top: 0;
-
-}
-
-
-/* ========================================= */
-/* BUTTON                                    */
-/* ========================================= */
-
-button {
-
-    border: 5px solid var(--dark);
-
-    background: var(--blue);
-
-    color: var(--white);
-
-    font-family: "Pixellet", monospace;
-
-    font-size: clamp(14px, 3vw, 18px);
-
-    padding: 16px 24px;
-
-    cursor: pointer;
-
-    box-shadow:
-        6px 6px 0 var(--dark);
-
-}
-
-
-button:active {
-
-    transform:
-        translate(5px, 5px);
-
-    box-shadow:
-        1px 1px 0 var(--dark);
-
-}
-
-
-/* ========================================= */
-/* LEVEL                                     */
-/* ========================================= */
-
-.level-number {
-
-    font-size: 18px;
-
-    color: var(--pink);
-
-    letter-spacing: 3px;
-
-    margin-bottom: 15px;
-
-}
-
-
-.level-title {
-
-    font-size: clamp(26px, 7vw, 48px);
-
-    color: var(--blue);
-
-    text-shadow:
-        3px 3px 0 var(--dark);
-
-    margin-bottom: 25px;
-
-}
-
-
-/* ========================================= */
-/* HEART COUNTER                             */
-/* ========================================= */
-
-.heart-counter {
-
-    display: inline-block;
-
-    padding: 10px 20px;
-
-    background: var(--pink);
-
-    color: var(--white);
-
-    border: 5px solid var(--dark);
-
-    font-size: 24px;
-
-    margin-bottom: 25px;
-
-}
-
-
-/* ========================================= */
-/* LEVEL TEXT                                */
-/* ========================================= */
-
-.level-instruction {
-
-    font-size: 20px;
-
-    margin-bottom: 10px;
-
-}
-
-
-.level-description {
-
-    font-size: 14px;
-
-    margin-bottom: 30px;
-
-}
-
-
-/* ========================================= */
-/* HIDDEN                                    */
-/* ========================================= */
-
-.hidden {
-
-    display: none !important;
-
-}
-
-
-/* ========================================= */
-/* AR SCREEN                                 */
-/* ========================================= */
-
-#ar-screen {
+#ar-canvas {
 
     position: fixed;
 
@@ -366,272 +11,80 @@ button:active {
     width: 100vw;
 
     height: 100vh;
-
-    padding: 0;
-
-    margin: 0;
-
-    background: black;
 
     display: block;
 
-    z-index: 9999;
-
-}
-
-
-/* ========================================= */
-/* CAMERA                                    */
-/* ========================================= */
-
-#camera-video {
-
-    position: fixed;
-
-    inset: 0;
-
-    width: 100vw;
-
-    height: 100vh;
-
-    object-fit: cover;
+    z-index: 1;
 
     background: black;
 
-    z-index: 1;
-
 }
 
 
 /* ========================================= */
-/* AR UI                                     */
+/* HEART OBJECT                              */
 /* ========================================= */
 
-#ar-ui {
+#heart-object {
 
     position: fixed;
 
-    inset: 0;
-
-    width: 100vw;
-
-    height: 100vh;
-
-    z-index: 10;
-
-    pointer-events: none;
-
-}
-
-
-/* ========================================= */
-/* AR MESSAGE                                */
-/* ========================================= */
-
-#ar-message {
-
-    position: absolute;
-
-    top: max(
-        30px,
-        env(safe-area-inset-top)
-    );
-
     left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    padding: 12px 18px;
-
-    background: var(--cream);
-
-    color: var(--dark);
-
-    border: 4px solid var(--dark);
-
-    box-shadow:
-        5px 5px 0 var(--dark);
-
-    font-family: "Pixellet", monospace;
-
-    font-size: 16px;
-
-    white-space: nowrap;
-
-}
-
-
-/* ========================================= */
-/* CENTER MARKER                             */
-/* ========================================= */
-
-#placement-dot {
-
-    position: absolute;
 
     top: 50%;
-
-    left: 50%;
 
     transform:
         translate(-50%, -50%);
 
-    color: var(--pink);
+    z-index: 20;
 
-    font-family: monospace;
+    color: #FF6B6B;
 
-    font-size: 42px;
+    font-family: Arial, sans-serif;
 
-    font-weight: bold;
+    font-size: 100px;
 
-}
+    line-height: 1;
 
+    text-shadow:
+        0 0 10px white,
+        4px 4px 0 #111827;
 
-/* ========================================= */
-/* PLACE BUTTON                              */
-/* ========================================= */
-
-#place-button {
-
-    position: absolute;
-
-    bottom: max(
-        35px,
-        env(safe-area-inset-bottom)
-    );
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    min-width: 190px;
-
-    background: var(--pink);
+    cursor: pointer;
 
     pointer-events: auto;
 
-}
-
-
-/* ========================================= */
-/* MOBILE                                    */
-/* ========================================= */
-
-@media (max-width: 500px) {
-
-
-    .pixel-frame {
-
-        width: 90vw;
-
-        padding: 25px 18px;
-
-        border-width: 6px;
-
-        box-shadow:
-            8px 8px 0 var(--dark),
-            -4px -4px 0 var(--pink);
-
-    }
-
-
-    .message-box {
-
-        padding: 15px;
-
-        border-width: 4px;
-
-    }
-
-
-    .game-title {
-
-        font-size: 38px;
-
-    }
-
-
-    .game-subtitle {
-
-        font-size: 12px;
-
-    }
-
-
-    button {
-
-        width: 100%;
-
-    }
-
-
-    #ar-message {
-
-        font-size: 13px;
-
-        padding: 10px 14px;
-
-    }
-
-
-    #placement-dot {
-
-        font-size: 36px;
-
-    }
-
-
-    #place-button {
-
-        width: auto;
-
-        min-width: 180px;
-
-    }
+    animation:
+        heartFloat 1.5s
+        ease-in-out
+        infinite;
 
 }
 
 
-/* ========================================= */
-/* SMALL PHONE                               */
-/* ========================================= */
+@keyframes heartFloat {
 
-@media (max-width: 380px) {
+    0% {
 
-
-    .pixel-frame {
-
-        padding: 20px 14px;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
 
     }
 
+    50% {
 
-    .game-title {
-
-        font-size: 32px;
-
-    }
-
-
-    .message-box {
-
-        font-size: 12px;
+        transform:
+            translate(-50%, -60%)
+            scale(1.12);
 
     }
 
+    100% {
 
-    .message-box .hello {
-
-        font-size: 18px;
-
-    }
-
-
-    #ar-message {
-
-        font-size: 11px;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
 
     }
 

@@ -17,8 +17,8 @@ const level1Screen =
 const arScreen =
     document.getElementById("ar-screen");
 
-const cameraVideo =
-    document.getElementById("camera-video");
+const canvas =
+    document.getElementById("ar-canvas");
 
 const arMessage =
     document.getElementById("ar-message");
@@ -29,12 +29,28 @@ const placementDot =
 const placeButton =
     document.getElementById("place-button");
 
+const heartObject =
+    document.getElementById("heart-object");
+
+const heartCount =
+    document.getElementById("heartCount");
+
 
 // ==========================================
-// CAMERA STREAM
+// ZAPPAR VARIABLES
 // ==========================================
 
-let cameraStream = null;
+let pipeline = null;
+
+let cameraSource = null;
+
+let instantTracker = null;
+
+let gl = null;
+
+let hasPlaced = false;
+
+let hearts = 0;
 
 
 // ==========================================
@@ -61,140 +77,27 @@ startARButton.addEventListener(
     "click",
     async function () {
 
-        console.log(
-            "START AR CLICKED"
-        );
-
-
-        // ------------------------------------------
-        // SHOW AR SCREEN
-        // ------------------------------------------
+        console.log("START AR");
 
         level1Screen.classList.add("hidden");
 
         arScreen.classList.remove("hidden");
 
 
-        // ------------------------------------------
-        // HIDE PLACE BUTTON
-        // ------------------------------------------
-
-        placeButton.style.display =
-            "none";
-
-
-        // ------------------------------------------
-        // SHOW SCAN MESSAGE
-        // ------------------------------------------
-
-        arMessage.textContent =
-            "SCAN THE GROUND";
-
-
-        // ------------------------------------------
-        // CHECK CAMERA SUPPORT
-        // ------------------------------------------
-
-        if (
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ) {
-
-            showError(
-                "อุปกรณ์หรือ Browser นี้ไม่รองรับการเปิดกล้อง"
-            );
-
-            return;
-
-        }
-
-
         try {
 
-            console.log(
-                "REQUESTING CAMERA..."
-            );
-
-
-            // ------------------------------------------
-            // REQUEST REAR CAMERA
-            // ------------------------------------------
-
-            cameraStream =
-                await navigator.mediaDevices.getUserMedia({
-
-                    video: {
-
-                        facingMode: {
-                            ideal: "environment"
-                        }
-
-                    },
-
-                    audio: false
-
-                });
-
-
-            console.log(
-                "CAMERA ACCESS GRANTED"
-            );
-
-
-            // ------------------------------------------
-            // CONNECT CAMERA TO VIDEO
-            // ------------------------------------------
-
-            cameraVideo.srcObject =
-                cameraStream;
-
-
-            cameraVideo.muted =
-                true;
-
-            cameraVideo.playsInline =
-                true;
-
-            cameraVideo.autoplay =
-                true;
-
-
-            // ------------------------------------------
-            // PLAY CAMERA
-            // ------------------------------------------
-
-            await cameraVideo.play();
-
-
-            console.log(
-                "CAMERA PLAYING"
-            );
-
-
-            // ------------------------------------------
-            // SHOW CENTER MARKER
-            // ------------------------------------------
-
-            placementDot.style.display =
-                "block";
-
-
-            console.log(
-                "AR CAMERA READY"
-            );
-
+            await startZapparAR();
 
         } catch (error) {
 
             console.error(
-                "CAMERA ERROR:",
+                "ZAPPAR ERROR:",
                 error
             );
 
-
             showError(
                 error.message ||
-                "ไม่สามารถเปิดกล้องได้"
+                "ไม่สามารถเริ่ม AR ได้"
             );
 
         }
@@ -204,24 +107,446 @@ startARButton.addEventListener(
 
 
 // ==========================================
-// PLACE BUTTON
+// START ZAPPAR AR
+// ==========================================
+
+async function startZapparAR() {
+
+    // ------------------------------------------
+    // CHECK ZAPPAR
+    // ------------------------------------------
+
+    if (
+        typeof Zappar ===
+        "undefined"
+    ) {
+
+        throw new Error(
+            "Zappar SDK โหลดไม่สำเร็จ"
+        );
+
+    }
+
+
+    console.log(
+        "Zappar SDK loaded"
+    );
+
+
+    // ------------------------------------------
+    // GET WEBGL
+    // ------------------------------------------
+
+    gl =
+        canvas.getContext(
+            "webgl",
+            {
+                alpha: false,
+                antialias: true
+            }
+        );
+
+
+    if (!gl) {
+
+        throw new Error(
+            "อุปกรณ์นี้ไม่รองรับ WebGL"
+        );
+
+    }
+
+
+    // ------------------------------------------
+    // RESIZE CANVAS
+    // ------------------------------------------
+
+    resizeCanvas();
+
+
+    // ------------------------------------------
+    // CREATE PIPELINE
+    // ------------------------------------------
+
+    pipeline =
+        new Zappar.Pipeline();
+
+
+    // ------------------------------------------
+    // CONNECT WEBGL
+    // ------------------------------------------
+
+    pipeline.glContextSet(gl);
+
+
+    // ------------------------------------------
+    // CREATE CAMERA
+    // ------------------------------------------
+
+    const deviceId =
+        Zappar.cameraDefaultDeviceID();
+
+
+    cameraSource =
+        new Zappar.CameraSource(
+            pipeline,
+            deviceId
+        );
+
+
+    // ------------------------------------------
+    // CREATE WORLD TRACKER
+    // ------------------------------------------
+
+    instantTracker =
+        new Zappar.InstantWorldTracker(
+            pipeline
+        );
+
+
+    // ------------------------------------------
+    // REQUEST PERMISSIONS
+    // ------------------------------------------
+
+    const granted =
+        await Zappar.permissionRequest();
+
+
+    if (!granted) {
+
+        Zappar.permissionDeniedUI();
+
+        throw new Error(
+            "ไม่ได้รับอนุญาตให้ใช้กล้องหรือ Motion Sensors"
+        );
+
+    }
+
+
+    // ------------------------------------------
+    // START CAMERA
+    // ------------------------------------------
+
+    cameraSource.start();
+
+
+    console.log(
+        "Zappar camera started"
+    );
+
+
+    // ------------------------------------------
+    // INITIAL UI
+    // ------------------------------------------
+
+    arMessage.textContent =
+        "SCAN THE GROUND";
+
+
+    placementDot.style.display =
+        "block";
+
+
+    placeButton.style.display =
+        "block";
+
+
+    placeButton.textContent =
+        "TAP TO PLACE";
+
+
+    heartObject.classList.add(
+        "hidden"
+    );
+
+
+    // ------------------------------------------
+    // START RENDER LOOP
+    // ------------------------------------------
+
+    requestAnimationFrame(
+        renderAR
+    );
+
+}
+
+
+// ==========================================
+// RENDER LOOP
+// ==========================================
+
+function renderAR() {
+
+    requestAnimationFrame(
+        renderAR
+    );
+
+
+    if (
+        !pipeline ||
+        !gl
+    ) {
+
+        return;
+
+    }
+
+
+    // ------------------------------------------
+    // PROCESS CAMERA FRAME
+    // ------------------------------------------
+
+    pipeline.processGL();
+
+
+    // ------------------------------------------
+    // UPDATE TRACKING
+    // ------------------------------------------
+
+    pipeline.frameUpdate();
+
+
+    // ------------------------------------------
+    // RESIZE
+    // ------------------------------------------
+
+    resizeCanvas();
+
+
+    gl.viewport(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    // ------------------------------------------
+    // UPLOAD CAMERA FRAME
+    // ------------------------------------------
+
+    pipeline.cameraFrameUploadGL();
+
+
+    // ------------------------------------------
+    // DRAW CAMERA
+    // ------------------------------------------
+
+    pipeline.cameraFrameDrawGL(
+        canvas.width,
+        canvas.height
+    );
+
+
+    // ------------------------------------------
+    // WORLD TRACKING
+    // ------------------------------------------
+
+    if (!hasPlaced) {
+
+        /*
+         * Choose a point approximately
+         * 5 units in front of the camera.
+         *
+         * This is the placement point used
+         * by Zappar Instant World Tracking.
+         */
+
+        instantTracker
+            .setAnchorPoseFromCameraOffset(
+                0,
+                0,
+                -5
+            );
+
+
+    } else {
+
+        /*
+         * Once placed, the anchor remains
+         * associated with the chosen world point.
+         */
+
+    }
+
+}
+
+
+// ==========================================
+// PLACE OBJECT
 // ==========================================
 
 placeButton.addEventListener(
     "click",
     function () {
 
+        if (!instantTracker) {
+
+            return;
+
+        }
+
+
         console.log(
-            "PLACE BUTTON CLICKED"
+            "PLACE OBJECT"
         );
 
 
+        // --------------------------------------
+        // LOCK PLACEMENT
+        // --------------------------------------
+
+        hasPlaced = true;
+
+
+        // --------------------------------------
+        // CHANGE UI
+        // --------------------------------------
+
         arMessage.textContent =
-            "FOUND!";
+            "WISH FOUND!";
+
+
+        placementDot.style.display =
+            "none";
 
 
         placeButton.style.display =
             "none";
+
+
+        // --------------------------------------
+        // SHOW TEMPORARY HEART
+        // --------------------------------------
+
+        heartObject.classList.remove(
+            "hidden"
+        );
+
+
+        console.log(
+            "HEART PLACED"
+        );
+
+    }
+);
+
+
+// ==========================================
+// HEART CLICK
+// ==========================================
+
+heartObject.addEventListener(
+    "click",
+    function () {
+
+        collectHeart();
+
+    }
+);
+
+
+// ==========================================
+// COLLECT HEART
+// ==========================================
+
+function collectHeart() {
+
+    hearts++;
+
+    if (hearts > 3) {
+
+        hearts = 3;
+
+    }
+
+
+    heartCount.textContent =
+        hearts;
+
+
+    heartObject.classList.add(
+        "hidden"
+    );
+
+
+    arMessage.textContent =
+        "WISH FOUND ♥";
+
+
+    console.log(
+        "HEARTS:",
+        hearts
+    );
+
+
+    if (hearts >= 3) {
+
+        arMessage.textContent =
+            "3 WISHES FOUND!";
+
+    }
+
+}
+
+
+// ==========================================
+// RESIZE
+// ==========================================
+
+function resizeCanvas() {
+
+    if (!canvas) {
+
+        return;
+
+    }
+
+
+    const width =
+        window.innerWidth;
+
+    const height =
+        window.innerHeight;
+
+
+    const pixelRatio =
+        window.devicePixelRatio ||
+        1;
+
+
+    canvas.width =
+        Math.floor(
+            width *
+            pixelRatio
+        );
+
+
+    canvas.height =
+        Math.floor(
+            height *
+            pixelRatio
+        );
+
+
+    canvas.style.width =
+        width + "px";
+
+
+    canvas.style.height =
+        height + "px";
+
+}
+
+
+// ==========================================
+// WINDOW RESIZE
+// ==========================================
+
+window.addEventListener(
+    "resize",
+    function () {
+
+        resizeCanvas();
 
     }
 );
@@ -240,7 +565,7 @@ function showError(message) {
 
 
     arMessage.textContent =
-        "CAMERA ERROR";
+        "AR ERROR";
 
 
     alert(
@@ -252,43 +577,14 @@ function showError(message) {
 
 
 // ==========================================
-// STOP CAMERA
-// ==========================================
-
-function stopCamera() {
-
-    if (!cameraStream) {
-
-        return;
-
-    }
-
-
-    cameraStream
-        .getTracks()
-        .forEach(
-            function (track) {
-
-                track.stop();
-
-            }
-        );
-
-
-    cameraStream = null;
-
-}
-
-
-// ==========================================
-// PAGE VISIBILITY
+// VISIBILITY
 // ==========================================
 
 document.addEventListener(
     "visibilitychange",
     function () {
 
-        if (!cameraStream) {
+        if (!cameraSource) {
 
             return;
 
@@ -300,30 +596,11 @@ document.addEventListener(
             "hidden"
         ) {
 
-            cameraStream
-                .getTracks()
-                .forEach(
-                    function (track) {
-
-                        track.enabled =
-                            false;
-
-                    }
-                );
-
+            cameraSource.pause();
 
         } else {
 
-            cameraStream
-                .getTracks()
-                .forEach(
-                    function (track) {
-
-                        track.enabled =
-                            true;
-
-                    }
-                );
+            cameraSource.start();
 
         }
 
