@@ -411,15 +411,17 @@ button:active {
 
 #ar-canvas {
 
-    position: absolute;
+    position: fixed;
 
     inset: 0;
 
-    width: 100%;
+    width: 100vw;
 
-    height: 100%;
+    height: 100vh;
 
     display: block;
+
+    z-index: 1;
 
 }
 
@@ -430,11 +432,17 @@ button:active {
 
 #ar-ui {
 
-    position: absolute;
+    position: fixed;
 
-    inset: 0;
+    top: 0;
 
-    z-index: 10;
+    left: 0;
+
+    width: 100vw;
+
+    height: 100vh;
+
+    z-index: 99999;
 
     pointer-events: none;
 
@@ -447,13 +455,15 @@ button:active {
 
 #ar-message {
 
-    position: absolute;
+    position: fixed;
 
     top: 30px;
 
     left: 50%;
 
     transform: translateX(-50%);
+
+    z-index: 100000;
 
     padding: 12px 18px;
 
@@ -477,12 +487,12 @@ button:active {
 
 
 /* ========================================= */
-/* AR CENTER DOT                             */
+/* AR CENTER MARKER                          */
 /* ========================================= */
 
 #placement-dot {
 
-    position: absolute;
+    position: fixed;
 
     left: 50%;
 
@@ -491,6 +501,8 @@ button:active {
     transform:
 
         translate(-50%, -50%);
+
+    z-index: 100000;
 
     color: var(--pink);
 
@@ -509,7 +521,7 @@ button:active {
 
 #place-button {
 
-    position: absolute;
+    position: fixed;
 
     bottom: 40px;
 
@@ -518,6 +530,8 @@ button:active {
     transform:
 
         translateX(-50%);
+
+    z-index: 100000;
 
     pointer-events: auto;
 
