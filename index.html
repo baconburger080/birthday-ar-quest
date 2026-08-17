@@ -3,7 +3,6 @@
 
 <head>
 
-    <!-- ตั้งค่าภาษาและการแสดงผลบนมือถือ -->
     <meta charset="UTF-8">
 
     <meta
@@ -11,24 +10,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <!-- ชื่อที่แสดงบนแท็บ Browser -->
     <title>Birthday AR Quest</title>
 
-    <!-- เชื่อมไฟล์ CSS ของเรา -->
     <link
         rel="stylesheet"
         href="style.css"
     >
-
-    <!--
-        Zappar Universal AR SDK
-
-        ตัวนี้เอาไว้เตรียมระบบ AR
-        สำหรับขั้นต่อไปเราจะใช้ Camera + World Tracking
-    -->
-    <script
-        src="https://libs.zappar.com/zappar-js/*/zappar.js">
-    </script>
 
 </head>
 
@@ -36,16 +23,13 @@
 <body>
 
 
-    <!-- ================================================= -->
-    <!-- INTRO SCREEN                                      -->
-    <!-- ================================================= -->
+    <!-- =============================== -->
+    <!-- INTRO -->
+    <!-- =============================== -->
 
     <section id="intro-screen">
 
         <div class="pixel-frame">
-
-
-            <!-- ชื่อเกม -->
 
             <div class="game-title">
 
@@ -56,8 +40,6 @@
             </div>
 
 
-            <!-- ชื่อคอนเซ็ปต์ -->
-
             <div class="game-subtitle">
 
                 FIND THE BIRTHDAY WISHES
@@ -65,52 +47,32 @@
             </div>
 
 
-            <!-- ข้อความเปิดเกม -->
-
             <div class="message-box">
 
-
                 <p class="hello">
-
                     HELLO, BABY.
-
                 </p>
 
-
                 <p>
-
                     วันนี้เป็นวันเกิดของเธอ
-
                 </p>
 
-
                 <p>
-
                     แต่เธอจะต้องตามหาของขวัญด้วยตัวเอง
-
                 </p>
 
-
                 <p>
-
                     มีของขวัญชิ้นหนึ่งถูกซ่อนเอาไว้
                     <br>
                     และมีเพียงเธอเท่านั้นที่จะหาเจอ
-
                 </p>
-
 
             </div>
 
 
-            <!-- ปุ่มเริ่มเกม -->
-
             <button id="startButton">
-
                 ARE YOU READY?
-
             </button>
-
 
         </div>
 
@@ -118,9 +80,9 @@
 
 
 
-    <!-- ================================================= -->
-    <!-- LEVEL 1 SCREEN                                    -->
-    <!-- ================================================= -->
+    <!-- =============================== -->
+    <!-- LEVEL 1 -->
+    <!-- =============================== -->
 
     <section
         id="level1-screen"
@@ -129,35 +91,22 @@
 
         <div class="pixel-frame">
 
-
-            <!-- หมายเลขด่าน -->
-
             <div class="level-number">
-
                 LEVEL 1
-
             </div>
 
-
-            <!-- ชื่อด่าน -->
 
             <div class="level-title">
-
                 FIND THE WISHES
-
             </div>
 
-
-            <!-- จำนวนหัวใจ -->
 
             <div class="heart-counter">
 
                 ♡
 
                 <span id="heartCount">
-
                     0
-
                 </span>
 
                 /3
@@ -165,32 +114,19 @@
             </div>
 
 
-            <!-- คำสั่ง -->
-
             <p class="level-instruction">
-
                 SCAN THE AREA
-
             </p>
 
-
-            <!-- คำอธิบาย -->
 
             <p class="level-description">
-
                 Find the hidden wishes...
-
             </p>
 
 
-            <!-- ปุ่มเปิด AR -->
-
             <button id="startARButton">
-
                 START AR
-
             </button>
-
 
         </div>
 
@@ -198,15 +134,9 @@
 
 
 
-    <!-- ================================================= -->
-    <!-- JAVASCRIPT                                       -->
-    <!-- ================================================= -->
-
-    <!--
-        ไฟล์ JavaScript ของเกมเรา
-        ต้องโหลดหลัง HTML เพื่อให้ JS
-        มองเห็นปุ่มและองค์ประกอบต่างๆ
-    -->
+    <!-- =============================== -->
+    <!-- JAVASCRIPT -->
+    <!-- =============================== -->
 
     <script src="script.js"></script>
 
