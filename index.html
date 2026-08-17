@@ -3,37 +3,19 @@
 
 <head>
 
-    <!-- ========================================= -->
-    <!-- BASIC SETTINGS                            -->
-    <!-- ========================================= -->
-
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
     <title>Birthday AR Quest</title>
-
-
-    <!-- ========================================= -->
-    <!-- CSS                                       -->
-    <!-- ========================================= -->
 
     <link
         rel="stylesheet"
         href="style.css"
     >
-
-
-    <!-- ========================================= -->
-    <!-- ZAPPAR UNIVERSAL AR SDK                   -->
-    <!-- ========================================= -->
-
-    <script
-        src="https://libs.zappar.com/zappar-js/*/zappar.js">
-    </script>
 
 </head>
 
@@ -42,78 +24,51 @@
 
 
     <!-- ========================================= -->
-    <!-- INTRO SCREEN                              -->
+    <!-- INTRO                                     -->
     <!-- ========================================= -->
 
     <section id="intro-screen">
 
         <div class="pixel-frame">
 
-
-            <!-- GAME TITLE -->
-
             <div class="game-title">
-
                 BIRTHDAY
                 <br>
                 AR QUEST
-
             </div>
 
-
-            <!-- GAME SUBTITLE -->
 
             <div class="game-subtitle">
-
                 FIND THE BIRTHDAY WISHES
-
             </div>
 
-
-            <!-- MESSAGE -->
 
             <div class="message-box">
 
                 <p class="hello">
-
                     HELLO, BABY.
-
                 </p>
 
-
                 <p>
-
                     วันนี้เป็นวันเกิดของเธอ
-
                 </p>
 
-
                 <p>
-
                     แต่เธอจะต้องตามหาของขวัญด้วยตัวเอง
-
                 </p>
 
-
                 <p>
-
                     มีของขวัญชิ้นหนึ่งถูกซ่อนเอาไว้
                     <br>
                     และมีเพียงเธอเท่านั้นที่จะหาเจอ
-
                 </p>
 
             </div>
 
 
-            <!-- START GAME -->
-
             <button id="startButton">
-
                 ARE YOU READY?
-
             </button>
-
 
         </div>
 
@@ -122,7 +77,7 @@
 
 
     <!-- ========================================= -->
-    <!-- LEVEL 1 SCREEN                            -->
+    <!-- LEVEL 1                                   -->
     <!-- ========================================= -->
 
     <section
@@ -132,35 +87,22 @@
 
         <div class="pixel-frame">
 
-
-            <!-- LEVEL NUMBER -->
-
             <div class="level-number">
-
                 LEVEL 1
-
             </div>
 
-
-            <!-- LEVEL TITLE -->
 
             <div class="level-title">
-
                 FIND THE WISHES
-
             </div>
 
-
-            <!-- HEART COUNTER -->
 
             <div class="heart-counter">
 
                 ♡
 
                 <span id="heartCount">
-
                     0
-
                 </span>
 
                 /3
@@ -168,32 +110,19 @@
             </div>
 
 
-            <!-- INSTRUCTION -->
-
             <p class="level-instruction">
-
                 SCAN THE AREA
-
             </p>
 
-
-            <!-- DESCRIPTION -->
 
             <p class="level-description">
-
                 Find the hidden wishes...
-
             </p>
 
 
-            <!-- START AR -->
-
             <button id="startARButton">
-
                 START AR
-
             </button>
-
 
         </div>
 
@@ -205,80 +134,53 @@
     <!-- AR SCREEN                                 -->
     <!-- ========================================= -->
 
-    <div
+    <section
         id="ar-screen"
         class="hidden"
     >
 
+        <!-- CAMERA VIDEO -->
 
-        <!-- ===================================== -->
-        <!-- WEBGL CAMERA CANVAS                   -->
-        <!-- ===================================== -->
-
-        <canvas
-            id="ar-canvas"
-        ></canvas>
-
+        <video
+            id="camera-video"
+            autoplay
+            muted
+            playsinline
+        ></video>
 
 
-        <!-- ===================================== -->
-        <!-- AR UI                                 -->
-        <!-- ===================================== -->
+        <!-- AR UI -->
 
         <div id="ar-ui">
 
-
-            <!-- ================================= -->
-            <!-- SCAN MESSAGE                      -->
-            <!-- ================================= -->
-
             <div id="ar-message">
-
                 SCAN THE GROUND
-
             </div>
 
-
-
-            <!-- ================================= -->
-            <!-- CENTER MARKER                     -->
-            <!-- ================================= -->
 
             <div id="placement-dot">
-
                 +
-
             </div>
 
-
-
-            <!-- ================================= -->
-            <!-- PLACE BUTTON                      -->
-            <!-- ================================= -->
 
             <button
                 id="place-button"
                 type="button"
             >
-
                 TAP TO PLACE
-
             </button>
-
 
         </div>
 
-
-    </div>
+    </section>
 
 
 
     <!-- ========================================= -->
-    <!-- JAVASCRIPT                               -->
+    <!-- JAVASCRIPT                                -->
     <!-- ========================================= -->
 
     <script src="script.js"></script>
-
 
 </body>
 

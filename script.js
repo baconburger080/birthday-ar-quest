@@ -17,22 +17,24 @@ const level1Screen =
 const arScreen =
     document.getElementById("ar-screen");
 
-const canvas =
-    document.getElementById("ar-canvas");
+const cameraVideo =
+    document.getElementById("camera-video");
 
 const arMessage =
     document.getElementById("ar-message");
 
+const placementDot =
+    document.getElementById("placement-dot");
+
+const placeButton =
+    document.getElementById("place-button");
+
 
 // ==========================================
-// ZAPPAR VARIABLES
+// CAMERA STREAM
 // ==========================================
 
-let pipeline = null;
-
-let source = null;
-
-let gl = null;
+let cameraStream = null;
 
 
 // ==========================================
@@ -60,505 +62,233 @@ startARButton.addEventListener(
     async function () {
 
         console.log(
-            "=============================="
-        );
-
-        console.log(
-            "START AR BUTTON CLICKED"
-        );
-
-        console.log(
-            "Zappar version:",
-            Zappar
-        );
-
-        console.log(
-            "=============================="
+            "START AR CLICKED"
         );
 
 
-        // ==========================================
+        // ------------------------------------------
         // SHOW AR SCREEN
-        // ==========================================
+        // ------------------------------------------
 
         level1Screen.classList.add("hidden");
 
         arScreen.classList.remove("hidden");
 
 
-        // ==========================================
-        // CHECK ZAPPAR
-        // ==========================================
+        // ------------------------------------------
+        // HIDE PLACE BUTTON
+        // ------------------------------------------
+
+        placeButton.style.display =
+            "none";
+
+
+        // ------------------------------------------
+        // SHOW SCAN MESSAGE
+        // ------------------------------------------
+
+        arMessage.textContent =
+            "SCAN THE GROUND";
+
+
+        // ------------------------------------------
+        // CHECK CAMERA SUPPORT
+        // ------------------------------------------
 
         if (
-            typeof Zappar ===
-            "undefined"
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
         ) {
 
             showError(
-                "Zappar SDK ไม่ถูกโหลด"
+                "อุปกรณ์หรือ Browser นี้ไม่รองรับการเปิดกล้อง"
             );
 
             return;
 
         }
 
-
-        // ==========================================
-        // CHECK CANVAS
-        // ==========================================
-
-        if (!canvas) {
-
-            showError(
-                "ไม่พบ AR Canvas"
-            );
-
-            return;
-
-        }
-
-
-        // ==========================================
-        // CREATE WEBGL CONTEXT
-        // ==========================================
 
         try {
 
-            gl =
-                canvas.getContext(
-                    "webgl",
-                    {
-                        alpha: false,
-                        antialias: true
-                    }
-                );
+            console.log(
+                "REQUESTING CAMERA..."
+            );
 
 
-            if (!gl) {
+            // ------------------------------------------
+            // REQUEST REAR CAMERA
+            // ------------------------------------------
 
-                showError(
-                    "Browser ไม่รองรับ WebGL"
-                );
+            cameraStream =
+                await navigator.mediaDevices.getUserMedia({
 
-                return;
+                    video: {
 
-            }
+                        facingMode: {
+                            ideal: "environment"
+                        }
+
+                    },
+
+                    audio: false
+
+                });
 
 
             console.log(
-                "WEBGL CONTEXT CREATED"
+                "CAMERA ACCESS GRANTED"
+            );
+
+
+            // ------------------------------------------
+            // CONNECT CAMERA TO VIDEO
+            // ------------------------------------------
+
+            cameraVideo.srcObject =
+                cameraStream;
+
+
+            cameraVideo.muted =
+                true;
+
+            cameraVideo.playsInline =
+                true;
+
+            cameraVideo.autoplay =
+                true;
+
+
+            // ------------------------------------------
+            // PLAY CAMERA
+            // ------------------------------------------
+
+            await cameraVideo.play();
+
+
+            console.log(
+                "CAMERA PLAYING"
+            );
+
+
+            // ------------------------------------------
+            // SHOW CENTER MARKER
+            // ------------------------------------------
+
+            placementDot.style.display =
+                "block";
+
+
+            console.log(
+                "AR CAMERA READY"
             );
 
 
         } catch (error) {
 
-            showError(
-                "สร้าง WebGL ไม่สำเร็จ\n\n" +
-                error.message
+            console.error(
+                "CAMERA ERROR:",
+                error
             );
 
-            return;
-
-        }
-
-
-        // ==========================================
-        // RESIZE CANVAS
-        // ==========================================
-
-        resizeCanvas();
-
-
-        // ==========================================
-        // CREATE PIPELINE
-        // ==========================================
-
-        try {
-
-            console.log(
-                "CREATING PIPELINE..."
-            );
-
-
-            pipeline =
-                new Zappar.Pipeline();
-
-
-            console.log(
-                "PIPELINE CREATED"
-            );
-
-
-            // ==========================================
-            // SET WEBGL CONTEXT
-            // ==========================================
-
-            pipeline.glContextSet(
-                gl
-            );
-
-
-            console.log(
-                "WEBGL CONTEXT SET"
-            );
-
-
-        } catch (error) {
 
             showError(
-                "สร้าง Zappar Pipeline ไม่สำเร็จ\n\n" +
-                error.message
+                error.message ||
+                "ไม่สามารถเปิดกล้องได้"
             );
-
-            return;
 
         }
-
-
-        // ==========================================
-        // CREATE CAMERA SOURCE
-        // ==========================================
-
-        try {
-
-            console.log(
-                "CREATING CAMERA SOURCE..."
-            );
-
-
-            const deviceId =
-                Zappar.cameraDefaultDeviceID();
-
-
-            console.log(
-                "CAMERA DEVICE:",
-                deviceId
-            );
-
-
-            source =
-                new Zappar.CameraSource(
-                    pipeline,
-                    deviceId
-                );
-
-
-            console.log(
-                "CAMERA SOURCE CREATED"
-            );
-
-
-        } catch (error) {
-
-            showError(
-                "สร้าง Camera Source ไม่สำเร็จ\n\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        // ==========================================
-        // REQUEST PERMISSION
-        // ==========================================
-
-        try {
-
-            console.log(
-                "REQUESTING PERMISSION..."
-            );
-
-
-            const granted =
-                await Zappar.permissionRequest();
-
-
-            console.log(
-                "PERMISSION RESULT:",
-                granted
-            );
-
-
-            if (!granted) {
-
-                showError(
-                    "ไม่ได้รับอนุญาตให้ใช้กล้องหรือ Motion Sensor"
-                );
-
-                return;
-
-            }
-
-
-        } catch (error) {
-
-            showError(
-                "ขอ Permission ไม่สำเร็จ\n\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        // ==========================================
-        // START CAMERA
-        // ==========================================
-
-        try {
-
-            console.log(
-                "STARTING CAMERA..."
-            );
-
-
-            source.start();
-
-
-            console.log(
-                "CAMERA STARTED"
-            );
-
-
-        } catch (error) {
-
-            showError(
-                "เปิดกล้อง Zappar ไม่สำเร็จ\n\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        // ==========================================
-        // UPDATE UI
-        // ==========================================
-
-        if (arMessage) {
-
-            arMessage.textContent =
-                "SCAN THE GROUND";
-
-        }
-
-
-        // ==========================================
-        // START RENDER LOOP
-        // ==========================================
-
-        console.log(
-            "STARTING RENDER LOOP..."
-        );
-
-
-        requestAnimationFrame(
-            animate
-        );
 
     }
 );
 
 
 // ==========================================
-// RENDER LOOP
+// PLACE BUTTON
 // ==========================================
 
-function animate() {
+placeButton.addEventListener(
+    "click",
+    function () {
 
-    requestAnimationFrame(
-        animate
+        console.log(
+            "PLACE BUTTON CLICKED"
+        );
+
+
+        arMessage.textContent =
+            "FOUND!";
+
+
+        placeButton.style.display =
+            "none";
+
+    }
+);
+
+
+// ==========================================
+// ERROR
+// ==========================================
+
+function showError(message) {
+
+    console.error(
+        "AR ERROR:",
+        message
     );
 
 
-    if (
-        !pipeline ||
-        !gl
-    ) {
+    arMessage.textContent =
+        "CAMERA ERROR";
+
+
+    alert(
+        "ไม่สามารถเริ่ม AR ได้\n\n" +
+        message
+    );
+
+}
+
+
+// ==========================================
+// STOP CAMERA
+// ==========================================
+
+function stopCamera() {
+
+    if (!cameraStream) {
 
         return;
 
     }
 
 
-    try {
+    cameraStream
+        .getTracks()
+        .forEach(
+            function (track) {
 
-        // ==========================================
-        // PROCESS CAMERA
-        // ==========================================
+                track.stop();
 
-        pipeline.processGL();
-
-
-        // ==========================================
-        // UPDATE FRAME
-        // ==========================================
-
-        pipeline.frameUpdate();
-
-
-        // ==========================================
-        // CLEAR SCREEN
-        // ==========================================
-
-        gl.bindFramebuffer(
-            gl.FRAMEBUFFER,
-            null
+            }
         );
 
 
-        gl.viewport(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-
-        gl.clearColor(
-            0,
-            0,
-            0,
-            1
-        );
-
-
-        gl.clear(
-            gl.COLOR_BUFFER_BIT
-        );
-
-
-        // ==========================================
-        // DRAW CAMERA
-        // ==========================================
-
-        if (
-            typeof pipeline.cameraFrameUploadGL ===
-            "function"
-        ) {
-
-            pipeline.cameraFrameUploadGL();
-
-        }
-
-
-        if (
-            typeof pipeline.cameraFrameDrawGL ===
-            "function"
-        ) {
-
-            pipeline.cameraFrameDrawGL(
-                canvas.width,
-                canvas.height
-            );
-
-        }
-
-
-    } catch (error) {
-
-        console.error(
-            "AR RENDER ERROR:",
-            error
-        );
-
-
-        // หยุดการแสดง error ซ้ำรัวๆ
-        if (
-            arMessage &&
-            arMessage.dataset.errorShown !==
-            "true"
-        ) {
-
-            arMessage.dataset.errorShown =
-                "true";
-
-            arMessage.textContent =
-                "AR ERROR: " +
-                error.message;
-
-        }
-
-    }
+    cameraStream = null;
 
 }
 
 
 // ==========================================
-// RESIZE CANVAS
-// ==========================================
-
-function resizeCanvas() {
-
-    if (!canvas) {
-
-        return;
-
-    }
-
-
-    const width =
-        window.innerWidth;
-
-    const height =
-        window.innerHeight;
-
-
-    const pixelRatio =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
-
-
-    canvas.width =
-        width * pixelRatio;
-
-    canvas.height =
-        height * pixelRatio;
-
-
-    canvas.style.width =
-        width + "px";
-
-    canvas.style.height =
-        height + "px";
-
-
-    if (gl) {
-
-        gl.viewport(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-    }
-
-}
-
-
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
-
-
-// ==========================================
-// VISIBILITY CHANGE
+// PAGE VISIBILITY
 // ==========================================
 
 document.addEventListener(
     "visibilitychange",
     function () {
 
-        if (!source) {
+        if (!cameraStream) {
 
             return;
 
@@ -570,52 +300,32 @@ document.addEventListener(
             "hidden"
         ) {
 
-            console.log(
-                "PAGE HIDDEN - PAUSING CAMERA"
-            );
+            cameraStream
+                .getTracks()
+                .forEach(
+                    function (track) {
 
-            source.pause();
+                        track.enabled =
+                            false;
+
+                    }
+                );
 
 
         } else {
 
-            console.log(
-                "PAGE VISIBLE - STARTING CAMERA"
-            );
+            cameraStream
+                .getTracks()
+                .forEach(
+                    function (track) {
 
-            source.start();
+                        track.enabled =
+                            true;
+
+                    }
+                );
 
         }
 
     }
 );
-
-
-// ==========================================
-// ERROR DISPLAY
-// ==========================================
-
-function showError(
-    message
-) {
-
-    console.error(
-        "ZAPPAR ERROR:",
-        message
-    );
-
-
-    if (arMessage) {
-
-        arMessage.textContent =
-            "AR ERROR";
-
-    }
-
-
-    alert(
-        "ไม่สามารถเริ่ม AR ได้\n\n" +
-        message
-    );
-
-}

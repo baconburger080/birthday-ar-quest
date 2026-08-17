@@ -18,7 +18,7 @@
 
 
 /* ========================================= */
-/* COLORS                                    */
+/* VARIABLES                                 */
 /* ========================================= */
 
 :root {
@@ -37,7 +37,7 @@
 
 
 /* ========================================= */
-/* BASIC RESET                               */
+/* RESET                                     */
 /* ========================================= */
 
 * {
@@ -50,13 +50,13 @@
 html,
 body {
 
+    width: 100%;
+
+    height: 100%;
+
     margin: 0;
 
     padding: 0;
-
-    width: 100%;
-
-    min-height: 100%;
 
 }
 
@@ -79,14 +79,14 @@ body {
 
 
 /* ========================================= */
-/* GENERAL SCREEN                            */
+/* SCREEN                                    */
 /* ========================================= */
 
 section {
 
     width: 100vw;
 
-    min-height: 100vh;
+    height: 100vh;
 
     display: flex;
 
@@ -100,7 +100,7 @@ section {
 
 
 /* ========================================= */
-/* INTRO SCREEN                              */
+/* INTRO                                     */
 /* ========================================= */
 
 #intro-screen {
@@ -115,13 +115,11 @@ section {
             var(--pink) 100%
         );
 
-    position: relative;
-
 }
 
 
 /* ========================================= */
-/* LEVEL 1 SCREEN                            */
+/* LEVEL 1                                   */
 /* ========================================= */
 
 #level1-screen {
@@ -154,20 +152,16 @@ section {
     border: 8px solid var(--dark);
 
     box-shadow:
-
         12px 12px 0 var(--dark),
-
         -6px -6px 0 var(--pink);
 
     text-align: center;
-
-    position: relative;
 
 }
 
 
 /* ========================================= */
-/* GAME TITLE                                */
+/* TITLE                                     */
 /* ========================================= */
 
 .game-title {
@@ -179,7 +173,6 @@ section {
     color: var(--blue);
 
     text-shadow:
-
         4px 4px 0 var(--dark);
 
     margin-bottom: 18px;
@@ -188,7 +181,7 @@ section {
 
 
 /* ========================================= */
-/* GAME SUBTITLE                             */
+/* SUBTITLE                                  */
 /* ========================================= */
 
 .game-subtitle {
@@ -205,7 +198,7 @@ section {
 
 
 /* ========================================= */
-/* MESSAGE BOX                               */
+/* MESSAGE                                   */
 /* ========================================= */
 
 .message-box {
@@ -242,54 +235,39 @@ section {
 
 button {
 
-    border: none;
-
-    font-family: "Pixellet", monospace;
-
-    font-size: clamp(14px, 3vw, 18px);
-
-    cursor: pointer;
-
-    padding: 16px 24px;
+    border: 5px solid var(--dark);
 
     background: var(--blue);
 
     color: var(--white);
 
-    border: 5px solid var(--dark);
+    font-family: "Pixellet", monospace;
+
+    font-size: clamp(14px, 3vw, 18px);
+
+    padding: 16px 24px;
+
+    cursor: pointer;
 
     box-shadow:
-
         6px 6px 0 var(--dark);
-
-    transition:
-
-        transform 0.08s,
-
-        box-shadow 0.08s;
 
 }
 
 
-/* ========================================= */
-/* BUTTON PRESS                              */
-/* ========================================= */
-
 button:active {
 
     transform:
-
         translate(5px, 5px);
 
     box-shadow:
-
         1px 1px 0 var(--dark);
 
 }
 
 
 /* ========================================= */
-/* LEVEL NUMBER                              */
+/* LEVEL                                     */
 /* ========================================= */
 
 .level-number {
@@ -298,16 +276,12 @@ button:active {
 
     color: var(--pink);
 
-    margin-bottom: 15px;
-
     letter-spacing: 3px;
+
+    margin-bottom: 15px;
 
 }
 
-
-/* ========================================= */
-/* LEVEL TITLE                               */
-/* ========================================= */
 
 .level-title {
 
@@ -316,7 +290,6 @@ button:active {
     color: var(--blue);
 
     text-shadow:
-
         3px 3px 0 var(--dark);
 
     margin-bottom: 25px;
@@ -348,14 +321,12 @@ button:active {
 
 
 /* ========================================= */
-/* LEVEL INSTRUCTION                         */
+/* LEVEL TEXT                                */
 /* ========================================= */
 
 .level-instruction {
 
     font-size: 20px;
-
-    color: var(--dark);
 
     margin-bottom: 10px;
 
@@ -396,20 +367,24 @@ button:active {
 
     height: 100vh;
 
+    padding: 0;
+
+    margin: 0;
+
     background: black;
 
-    z-index: 9999;
+    display: block;
 
-    overflow: hidden;
+    z-index: 9999;
 
 }
 
 
 /* ========================================= */
-/* AR CANVAS                                 */
+/* CAMERA                                    */
 /* ========================================= */
 
-#ar-canvas {
+#camera-video {
 
     position: fixed;
 
@@ -419,7 +394,9 @@ button:active {
 
     height: 100vh;
 
-    display: block;
+    object-fit: cover;
+
+    background: black;
 
     z-index: 1;
 
@@ -434,15 +411,13 @@ button:active {
 
     position: fixed;
 
-    top: 0;
-
-    left: 0;
+    inset: 0;
 
     width: 100vw;
 
     height: 100vh;
 
-    z-index: 99999;
+    z-index: 10;
 
     pointer-events: none;
 
@@ -455,15 +430,17 @@ button:active {
 
 #ar-message {
 
-    position: fixed;
+    position: absolute;
 
-    top: 30px;
+    top: max(
+        30px,
+        env(safe-area-inset-top)
+    );
 
     left: 50%;
 
-    transform: translateX(-50%);
-
-    z-index: 100000;
+    transform:
+        translateX(-50%);
 
     padding: 12px 18px;
 
@@ -474,7 +451,6 @@ button:active {
     border: 4px solid var(--dark);
 
     box-shadow:
-
         5px 5px 0 var(--dark);
 
     font-family: "Pixellet", monospace;
@@ -487,28 +463,25 @@ button:active {
 
 
 /* ========================================= */
-/* AR CENTER MARKER                          */
+/* CENTER MARKER                             */
 /* ========================================= */
 
 #placement-dot {
 
-    position: fixed;
-
-    left: 50%;
+    position: absolute;
 
     top: 50%;
 
+    left: 50%;
+
     transform:
-
         translate(-50%, -50%);
-
-    z-index: 100000;
 
     color: var(--pink);
 
     font-family: monospace;
 
-    font-size: 40px;
+    font-size: 42px;
 
     font-weight: bold;
 
@@ -516,41 +489,28 @@ button:active {
 
 
 /* ========================================= */
-/* AR PLACE BUTTON                           */
+/* PLACE BUTTON                              */
 /* ========================================= */
 
 #place-button {
 
-    position: fixed;
+    position: absolute;
 
-    bottom: 40px;
+    bottom: max(
+        35px,
+        env(safe-area-inset-bottom)
+    );
 
     left: 50%;
 
     transform:
-
         translateX(-50%);
-
-    z-index: 100000;
-
-    pointer-events: auto;
 
     min-width: 190px;
 
     background: var(--pink);
 
-}
-
-
-/* ========================================= */
-/* AR PLACE BUTTON ACTIVE                    */
-/* ========================================= */
-
-#place-button:active {
-
-    transform:
-
-        translate(-50%, 5px);
+    pointer-events: auto;
 
 }
 
@@ -571,9 +531,7 @@ button:active {
         border-width: 6px;
 
         box-shadow:
-
             8px 8px 0 var(--dark),
-
             -4px -4px 0 var(--pink);
 
     }
@@ -611,8 +569,6 @@ button:active {
 
     #ar-message {
 
-        top: 25px;
-
         font-size: 13px;
 
         padding: 10px 14px;
@@ -622,14 +578,12 @@ button:active {
 
     #placement-dot {
 
-        font-size: 35px;
+        font-size: 36px;
 
     }
 
 
     #place-button {
-
-        bottom: 30px;
 
         width: auto;
 
