@@ -2,11 +2,43 @@
 // GET ELEMENTS
 // ==========================================
 
-const startButton = document.getElementById("startButton");
-const startARButton = document.getElementById("startARButton");
+const startButton =
+    document.getElementById("startButton");
 
-const introScreen = document.getElementById("intro-screen");
-const level1Screen = document.getElementById("level1-screen");
+const startARButton =
+    document.getElementById("startARButton");
+
+const introScreen =
+    document.getElementById("intro-screen");
+
+const level1Screen =
+    document.getElementById("level1-screen");
+
+const arScreen =
+    document.getElementById("ar-screen");
+
+const canvas =
+    document.getElementById("ar-canvas");
+
+
+// ==========================================
+// WEBGL
+// ==========================================
+
+const gl =
+    canvas.getContext("webgl", {
+        alpha: false,
+        antialias: false
+    });
+
+
+// ==========================================
+// ZAPPAR VARIABLES
+// ==========================================
+
+let pipeline = null;
+
+let source = null;
 
 
 // ==========================================
@@ -28,78 +60,228 @@ startButton.addEventListener("click", function () {
 
 startARButton.addEventListener("click", async function () {
 
-    console.log("START AR BUTTON CLICKED");
+    console.log("START AR");
+
+    // เปลี่ยนจากหน้า Level 1 ไปหน้า AR
+    level1Screen.classList.add("hidden");
+
+    arScreen.classList.remove("hidden");
+
+
+    // ปรับขนาด Canvas
+    resizeCanvas();
+
 
     try {
 
-        // ขอสิทธิ์ใช้กล้องหลัง
-        const stream = await navigator.mediaDevices.getUserMedia({
+        // ==========================================
+        // CREATE ZAPPAR PIPELINE
+        // ==========================================
 
-            video: {
-                facingMode: {
-                    ideal: "environment"
-                }
-            },
-
-            audio: false
-
-        });
+        pipeline =
+            new Zappar.Pipeline();
 
 
-        console.log("CAMERA ACCESS GRANTED");
+        // บอก Zappar ให้ใช้ WebGL context ของเรา
+        pipeline.glContextSet(gl);
 
 
         // ==========================================
-        // CREATE CAMERA SCREEN
+        // CREATE CAMERA SOURCE
         // ==========================================
 
-        const cameraScreen = document.createElement("div");
+        const deviceId =
+            Zappar.cameraDefaultDeviceID();
 
-        cameraScreen.id = "camera-screen";
 
-
-        // ==========================================
-        // CREATE VIDEO
-        // ==========================================
-
-        const video = document.createElement("video");
-
-        video.setAttribute("autoplay", "");
-        video.setAttribute("playsinline", "");
-        video.setAttribute("muted", "");
-
-        video.autoplay = true;
-        video.playsInline = true;
-        video.muted = true;
-
-        video.srcObject = stream;
+        source =
+            new Zappar.CameraSource(
+                pipeline,
+                deviceId
+            );
 
 
         // ==========================================
-        // ADD VIDEO TO CAMERA SCREEN
+        // REQUEST PERMISSION
         // ==========================================
 
-        cameraScreen.appendChild(video);
+        const granted =
+            await Zappar.permissionRequest();
 
-        document.body.appendChild(cameraScreen);
+
+        if (!granted) {
+
+            console.log("PERMISSION DENIED");
+
+            Zappar.permissionDeniedUI();
+
+            return;
+
+        }
+
+
+        console.log("PERMISSION GRANTED");
 
 
         // ==========================================
-        // HIDE LEVEL 1
+        // START CAMERA
         // ==========================================
 
-        level1Screen.classList.add("hidden");
+        source.start();
+
+
+        console.log("ZAPPAR CAMERA STARTED");
+
+
+        // ==========================================
+        // START RENDER LOOP
+        // ==========================================
+
+        animate();
 
 
     } catch (error) {
 
-        console.error("CAMERA ERROR:", error);
+        console.error(
+            "ZAPPAR ERROR:",
+            error
+        );
 
         alert(
-            "ไม่สามารถเปิดกล้องได้\n\n" +
-            "กรุณาอนุญาตให้เว็บไซต์ใช้กล้อง"
+            "ไม่สามารถเริ่ม AR ได้\n\n" +
+            error.message
         );
 
     }
 
 });
+
+
+// ==========================================
+// RESIZE CANVAS
+// ==========================================
+
+function resizeCanvas() {
+
+    const width =
+        window.innerWidth;
+
+    const height =
+        window.innerHeight;
+
+
+    canvas.width =
+        width;
+
+    canvas.height =
+        height;
+
+
+    canvas.style.width =
+        width + "px";
+
+    canvas.style.height =
+        height + "px";
+
+}
+
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+// ==========================================
+// AR RENDER LOOP
+// ==========================================
+
+function animate() {
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    if (!pipeline) {
+        return;
+    }
+
+
+    // ==========================================
+    // PROCESS CAMERA FRAME
+    // ==========================================
+
+    pipeline.processGL();
+
+
+    // ==========================================
+    // GET TRACKING RESULTS
+    // ==========================================
+
+    pipeline.frameUpdate();
+
+
+    // ==========================================
+    // UPLOAD CAMERA FRAME
+    // ==========================================
+
+    pipeline.cameraFrameUploadGL();
+
+
+    // ==========================================
+    // CLEAR SCREEN
+    // ==========================================
+
+    gl.clearColor(
+        0,
+        0,
+        0,
+        1
+    );
+
+    gl.clear(
+        gl.COLOR_BUFFER_BIT
+    );
+
+
+    // ==========================================
+    // DRAW CAMERA
+    // ==========================================
+
+    pipeline.cameraFrameDrawGL(
+        canvas.width,
+        canvas.height
+    );
+
+}
+
+
+// ==========================================
+// PAUSE CAMERA WHEN LEAVING PAGE
+// ==========================================
+
+document.addEventListener(
+    "visibilitychange",
+    function () {
+
+        if (!source) {
+            return;
+        }
+
+
+        if (
+            document.visibilityState ===
+            "hidden"
+        ) {
+
+            source.pause();
+
+        } else {
+
+            source.start();
+
+        }
+
+    }
+);

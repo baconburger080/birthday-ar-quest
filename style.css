@@ -100,7 +100,7 @@ section {
 
 
 /* ========================================= */
-/* INTRO BACKGROUND                          */
+/* INTRO SCREEN                              */
 /* ========================================= */
 
 #intro-screen {
@@ -121,7 +121,7 @@ section {
 
 
 /* ========================================= */
-/* LEVEL 1 BACKGROUND                        */
+/* LEVEL 1 SCREEN                            */
 /* ========================================= */
 
 #level1-screen {
@@ -383,10 +383,10 @@ button:active {
 
 
 /* ========================================= */
-/* CAMERA SCREEN                             */
+/* AR SCREEN                                 */
 /* ========================================= */
 
-#camera-screen {
+#ar-screen {
 
     position: fixed;
 
@@ -405,13 +405,138 @@ button:active {
 }
 
 
-#camera-screen video {
+/* ========================================= */
+/* AR CANVAS                                 */
+/* ========================================= */
+
+#ar-canvas {
+
+    position: absolute;
+
+    inset: 0;
 
     width: 100%;
 
     height: 100%;
 
-    object-fit: cover;
+    display: block;
+
+}
+
+
+/* ========================================= */
+/* AR UI                                     */
+/* ========================================= */
+
+#ar-ui {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 10;
+
+    pointer-events: none;
+
+}
+
+
+/* ========================================= */
+/* AR MESSAGE                                */
+/* ========================================= */
+
+#ar-message {
+
+    position: absolute;
+
+    top: 30px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    padding: 12px 18px;
+
+    background: var(--cream);
+
+    color: var(--dark);
+
+    border: 4px solid var(--dark);
+
+    box-shadow:
+
+        5px 5px 0 var(--dark);
+
+    font-family: "Pixellet", monospace;
+
+    font-size: 16px;
+
+    white-space: nowrap;
+
+}
+
+
+/* ========================================= */
+/* AR CENTER DOT                             */
+/* ========================================= */
+
+#placement-dot {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+
+        translate(-50%, -50%);
+
+    color: var(--pink);
+
+    font-family: monospace;
+
+    font-size: 40px;
+
+    font-weight: bold;
+
+}
+
+
+/* ========================================= */
+/* AR PLACE BUTTON                           */
+/* ========================================= */
+
+#place-button {
+
+    position: absolute;
+
+    bottom: 40px;
+
+    left: 50%;
+
+    transform:
+
+        translateX(-50%);
+
+    pointer-events: auto;
+
+    min-width: 190px;
+
+    background: var(--pink);
+
+}
+
+
+/* ========================================= */
+/* AR PLACE BUTTON ACTIVE                    */
+/* ========================================= */
+
+#place-button:active {
+
+    transform:
+
+        translate(-50%, 5px);
 
 }
 
@@ -422,7 +547,10 @@ button:active {
 
 @media (max-width: 500px) {
 
+
     .pixel-frame {
+
+        width: 90vw;
 
         padding: 25px 18px;
 
@@ -446,9 +574,96 @@ button:active {
     }
 
 
+    .game-title {
+
+        font-size: 38px;
+
+    }
+
+
+    .game-subtitle {
+
+        font-size: 12px;
+
+    }
+
+
     button {
 
         width: 100%;
+
+    }
+
+
+    #ar-message {
+
+        top: 25px;
+
+        font-size: 13px;
+
+        padding: 10px 14px;
+
+    }
+
+
+    #placement-dot {
+
+        font-size: 35px;
+
+    }
+
+
+    #place-button {
+
+        bottom: 30px;
+
+        width: auto;
+
+        min-width: 180px;
+
+    }
+
+}
+
+
+/* ========================================= */
+/* SMALL PHONE                               */
+/* ========================================= */
+
+@media (max-width: 380px) {
+
+
+    .pixel-frame {
+
+        padding: 20px 14px;
+
+    }
+
+
+    .game-title {
+
+        font-size: 32px;
+
+    }
+
+
+    .message-box {
+
+        font-size: 12px;
+
+    }
+
+
+    .message-box .hello {
+
+        font-size: 18px;
+
+    }
+
+
+    #ar-message {
+
+        font-size: 11px;
 
     }
 
