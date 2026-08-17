@@ -3,6 +3,10 @@
 
 <head>
 
+    <!-- ========================================= -->
+    <!-- BASIC SETTINGS                            -->
+    <!-- ========================================= -->
+
     <meta charset="UTF-8">
 
     <meta
@@ -12,13 +16,24 @@
 
     <title>Birthday AR Quest</title>
 
+
+    <!-- ========================================= -->
+    <!-- CSS                                       -->
+    <!-- ========================================= -->
+
     <link
         rel="stylesheet"
         href="style.css"
     >
 
-    <!-- Zappar Universal AR JavaScript SDK -->
-    <script src="https://libs.zappar.com/zappar-js/*/zappar.js"></script>
+
+    <!-- ========================================= -->
+    <!-- ZAPPAR UNIVERSAL AR SDK                   -->
+    <!-- ========================================= -->
+
+    <script
+        src="https://libs.zappar.com/zappar-js/*/zappar.js">
+    </script>
 
 </head>
 
@@ -27,12 +42,15 @@
 
 
     <!-- ========================================= -->
-    <!-- INTRO -->
+    <!-- INTRO SCREEN                              -->
     <!-- ========================================= -->
 
     <section id="intro-screen">
 
         <div class="pixel-frame">
+
+
+            <!-- GAME TITLE -->
 
             <div class="game-title">
 
@@ -42,37 +60,60 @@
 
             </div>
 
+
+            <!-- GAME SUBTITLE -->
+
             <div class="game-subtitle">
 
                 FIND THE BIRTHDAY WISHES
 
             </div>
 
+
+            <!-- MESSAGE -->
+
             <div class="message-box">
 
                 <p class="hello">
+
                     HELLO, BABY.
+
                 </p>
 
+
                 <p>
+
                     วันนี้เป็นวันเกิดของเธอ
+
                 </p>
 
+
                 <p>
+
                     แต่เธอจะต้องตามหาของขวัญด้วยตัวเอง
+
                 </p>
 
+
                 <p>
+
                     มีของขวัญชิ้นหนึ่งถูกซ่อนเอาไว้
                     <br>
                     และมีเพียงเธอเท่านั้นที่จะหาเจอ
+
                 </p>
 
             </div>
 
+
+            <!-- START GAME -->
+
             <button id="startButton">
+
                 ARE YOU READY?
+
             </button>
+
 
         </div>
 
@@ -81,7 +122,7 @@
 
 
     <!-- ========================================= -->
-    <!-- LEVEL 1 -->
+    <!-- LEVEL 1 SCREEN                            -->
     <!-- ========================================= -->
 
     <section
@@ -91,37 +132,68 @@
 
         <div class="pixel-frame">
 
+
+            <!-- LEVEL NUMBER -->
+
             <div class="level-number">
+
                 LEVEL 1
+
             </div>
 
+
+            <!-- LEVEL TITLE -->
+
             <div class="level-title">
+
                 FIND THE WISHES
+
             </div>
+
+
+            <!-- HEART COUNTER -->
 
             <div class="heart-counter">
 
                 ♡
 
                 <span id="heartCount">
+
                     0
+
                 </span>
 
                 /3
 
             </div>
 
+
+            <!-- INSTRUCTION -->
+
             <p class="level-instruction">
-                FIND THE HIDDEN WISHES
+
+                SCAN THE AREA
+
             </p>
+
+
+            <!-- DESCRIPTION -->
 
             <p class="level-description">
-                Point your camera at the ground.
+
+                Find the hidden wishes...
+
             </p>
 
+
+            <!-- START AR -->
+
             <button id="startARButton">
+
                 START AR
+
             </button>
+
 
         </div>
 
@@ -130,7 +202,7 @@
 
 
     <!-- ========================================= -->
-    <!-- AR SCREEN -->
+    <!-- AR SCREEN                                 -->
     <!-- ========================================= -->
 
     <div
@@ -138,41 +210,75 @@
         class="hidden"
     >
 
-        <!-- WebGL Canvas -->
-        <canvas id="ar-canvas"></canvas>
+
+        <!-- ===================================== -->
+        <!-- WEBGL CAMERA CANVAS                   -->
+        <!-- ===================================== -->
+
+        <canvas
+            id="ar-canvas"
+        ></canvas>
 
 
-        <!-- AR UI -->
+
+        <!-- ===================================== -->
+        <!-- AR UI                                 -->
+        <!-- ===================================== -->
 
         <div id="ar-ui">
 
+
+            <!-- ================================= -->
+            <!-- SCAN MESSAGE                      -->
+            <!-- ================================= -->
+
             <div id="ar-message">
+
                 SCAN THE GROUND
+
             </div>
 
+
+
+            <!-- ================================= -->
+            <!-- CENTER MARKER                     -->
+            <!-- ================================= -->
 
             <div id="placement-dot">
+
                 +
+
             </div>
 
 
-            <button id="place-button">
+
+            <!-- ================================= -->
+            <!-- PLACE BUTTON                      -->
+            <!-- ================================= -->
+
+            <button
+                id="place-button"
+                type="button"
+            >
 
                 TAP TO PLACE
 
             </button>
 
+
         </div>
+
 
     </div>
 
 
 
     <!-- ========================================= -->
-    <!-- GAME JAVASCRIPT -->
+    <!-- JAVASCRIPT                               -->
     <!-- ========================================= -->
 
     <script src="script.js"></script>
+
 
 </body>
 
