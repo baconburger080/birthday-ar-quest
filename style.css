@@ -1,7 +1,20 @@
 /* ========================================= */
-/* BIRTHDAY AR QUEST                         */
-/* PIXEL GAME STYLE                          */
+/* FONT                                      */
 /* ========================================= */
+
+@font-face {
+
+    font-family: "Pixellet";
+
+    src: url("fonts/Pixellet.ttf") format("truetype");
+
+    font-weight: normal;
+
+    font-style: normal;
+
+    font-display: swap;
+
+}
 
 
 /* ========================================= */
@@ -24,7 +37,7 @@
 
 
 /* ========================================= */
-/* BODY                                      */
+/* BASIC RESET                               */
 /* ========================================= */
 
 * {
@@ -47,6 +60,10 @@ body {
 
 }
 
+
+/* ========================================= */
+/* BODY                                      */
+/* ========================================= */
 
 body {
 
@@ -227,7 +244,7 @@ button {
 
     border: none;
 
-    font-family: inherit;
+    font-family: "Pixellet", monospace;
 
     font-size: clamp(14px, 3vw, 18px);
 
@@ -254,7 +271,9 @@ button {
 }
 
 
-/* Pixel button press */
+/* ========================================= */
+/* BUTTON PRESS                              */
+/* ========================================= */
 
 button:active {
 
